@@ -7,10 +7,8 @@ const port = process.env.PORT || 5000;
 
 // midlware
 
-
 app.use(cors());
 app.use(express.json());
-
 
 // .......................................
 
@@ -33,28 +31,28 @@ async function run() {
     // DB Collection
     const zedGadget = client.db("zedGadgetDB").collection("textContainer");
 
-
-    app.get('/textContain', async (req, res) =>{
-        const cursor = zedGadget.find();
-        const result = await cursor.toArray();
-        res.send(result)
-    })
+    app.get("/textContain", async (req, res) => {
+      const cursor = zedGadget.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
     app.post("/textContain", async (req, res) => {
-      const newBox = req.body;
-      console.log(newBox);
+      const newBox = {
+        ...req.body,
+        createdAt: new Date(), 
+      };
       const result = await zedGadget.insertOne(newBox);
       res.send(result);
     });
 
-
-    app.delete('/textContain/:id', async (req, res)=>{
-        const id = req.params.id;
-        const query = {_id: new ObjectId(id)}
-        const result = await zedGadget.deleteOne(query)
-        res.send(result)
-    })
-
+    
+    app.delete("/textContain/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await zedGadget.deleteOne(query);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
